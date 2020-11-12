@@ -1,18 +1,21 @@
 const users = require('./users')
 const jwt = require('jsonwebtoken');
-const accessTokenSecret = "myaccesstokensecret";
-const loginRequestHandler =  (req, res)=>{
-    const {username, password} = req.body;
+const accessTokenSecret = process.env.SECRET;
+const loginRequestHandler = (req, res) => {
+    const { username, password } = req.body;
 
-    const user = users.find(u=>{return u.username===username&& u.password===password});
+    const user = users.find(u => { return u.username === username && u.password === password });
 
-    if(user){
-        const accessToken = jwt.sign({username:user.username,role:user.role}, accessTokenSecret)
+    if (user) {
+        const accessToken = jwt.sign({ username: user.username, role: user.role }, accessTokenSecret)
         return res.json({
-            accessToken
+            accessToken,
+           
         })
-    }else{
-        return res.send('username or password is incorrect');
+    } else {
+        return res.status(401).send({
+            message: "username or password is incorrect"
+        })
     }
 }
 
